@@ -10,7 +10,7 @@ buildscript {
         'android_maven'            : '2.1',
         'android_navigation'       : '2.0.0',
         'android_orchestrator'     : '1.1.1',
-        'dagger'                   : '2.22.1',
+        'dagger'                   : '2.25.3',
         'dokka'                    : '0.10.0',
         'google_play'              : '1.6.3',
         'gradle'                   : '3.5.0',
