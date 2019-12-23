@@ -16,11 +16,6 @@
 
 package com.sukhaikoh.reborn.dfmdagger
 
-import android.app.Activity
-import android.app.Service
-import android.content.BroadcastReceiver
-import android.content.ContentProvider
-import androidx.fragment.app.Fragment
 import dagger.android.DispatchingAndroidInjector
 import javax.inject.Inject
 
@@ -80,59 +75,15 @@ import javax.inject.Inject
  */
 abstract class FeatureModuleInjector {
     @Inject
-    lateinit var dispatchingActivityInjector: DispatchingAndroidInjector<Activity>
-    @Inject
-    lateinit var dispatchingBroadcastReceiverInjector: DispatchingAndroidInjector<BroadcastReceiver>
-    @Inject
-    lateinit var dispatchingContentProviderInjector: DispatchingAndroidInjector<ContentProvider>
-    @Inject
-    lateinit var dispatchingFragmentInjector: DispatchingAndroidInjector<Fragment>
-    @Inject
-    lateinit var dispatchingServiceInjector: DispatchingAndroidInjector<Service>
+    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
 
     /**
-     * Get the [Activity] injector.
+     * Get the injector.
      *
-     * @return [Activity] injector.
+     * @return injector.
      */
-    fun activityInjector(): DispatchingAndroidInjector<Activity> {
-        return dispatchingActivityInjector
-    }
-
-    /**
-     * Get the [BroadcastReceiver] injector.
-     *
-     * @return [BroadcastReceiver] injector.
-     */
-    fun broadcastReceiverInjector(): DispatchingAndroidInjector<BroadcastReceiver> {
-        return dispatchingBroadcastReceiverInjector
-    }
-
-    /**
-     * Get the [ContentProvider] injector.
-     *
-     * @return [ContentProvider] injector.
-     */
-    fun contentProviderInjector(): DispatchingAndroidInjector<ContentProvider> {
-        return dispatchingContentProviderInjector
-    }
-
-    /**
-     * Get the [Fragment] injector.
-     *
-     * @return [Fragment] injector.
-     */
-    fun fragmentInjector(): DispatchingAndroidInjector<Fragment> {
-        return dispatchingFragmentInjector
-    }
-
-    /**
-     * Get the [Service] injector.
-     *
-     * @return [Service] injector.
-     */
-    fun serviceInjector(): DispatchingAndroidInjector<Service> {
-        return dispatchingServiceInjector
+    fun androidInjector(): DispatchingAndroidInjector<Any> {
+        return dispatchingAndroidInjector
     }
 
     /**

@@ -25,11 +25,7 @@ import androidx.fragment.app.Fragment
 import dagger.android.AndroidInjection
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasActivityInjector
-import dagger.android.HasBroadcastReceiverInjector
-import dagger.android.HasContentProviderInjector
-import dagger.android.HasServiceInjector
-import dagger.android.support.HasSupportFragmentInjector
+import dagger.android.HasAndroidInjector
 import javax.inject.Inject
 
 /**
@@ -87,65 +83,23 @@ import javax.inject.Inject
  * }
  * ```
  */
-abstract class DynamicFeatureModuleApplication : Application(),
-    HasActivityInjector,
-    HasSupportFragmentInjector,
-    HasServiceInjector,
-    HasBroadcastReceiverInjector,
-    HasContentProviderInjector {
+abstract class DynamicFeatureModuleApplication : Application(), HasAndroidInjector {
 
     @Inject
-    lateinit var dispatchingActivityInjector: DispatchingAndroidInjector<Activity>
-    @Inject
-    lateinit var dispatchingBroadcastReceiverInjector: DispatchingAndroidInjector<BroadcastReceiver>
-    @Inject
-    lateinit var dispatchingContentProviderInjector: DispatchingAndroidInjector<ContentProvider>
-    @Inject
-    lateinit var dispatchingFragmentInjector: DispatchingAndroidInjector<Fragment>
-    @Inject
-    lateinit var dispatchingServiceInjector: DispatchingAndroidInjector<Service>
+    lateinit var dispatchingAndroidInjector: DispatchingAndroidInjector<Any>
+
     @Volatile
     private var needToInject = true
     private val injectedModules = mutableSetOf<FeatureModule>()
 
     val component by lazy { applicationInjector() }
 
-    private val activityModuleInjectors = mutableListOf<DispatchingAndroidInjector<Activity>>()
-    private val broadcastReceiverModuleInjectors =
-        mutableListOf<DispatchingAndroidInjector<BroadcastReceiver>>()
-    private val contentProviderModuleInjectors =
-        mutableListOf<DispatchingAndroidInjector<ContentProvider>>()
-    private val fragmentModuleInjectors = mutableListOf<DispatchingAndroidInjector<Fragment>>()
-    private val serviceModuleInjectors = mutableListOf<DispatchingAndroidInjector<Service>>()
+    private val androidModuleInjectors = mutableListOf<DispatchingAndroidInjector<Any>>()
 
-    private val activityInjector by lazy {
+    private val androidInjector by lazy {
         Injector(
-            dispatchingActivityInjector,
-            activityModuleInjectors
-        )
-    }
-    private val broadcastReceiverInjector by lazy {
-        Injector(
-            dispatchingBroadcastReceiverInjector,
-            broadcastReceiverModuleInjectors
-        )
-    }
-    private val contentProviderInjector by lazy {
-        Injector(
-            dispatchingContentProviderInjector,
-            contentProviderModuleInjectors
-        )
-    }
-    private val fragmentInjector by lazy {
-        Injector(
-            dispatchingFragmentInjector,
-            fragmentModuleInjectors
-        )
-    }
-    private val serviceInjector by lazy {
-        Injector(
-            dispatchingServiceInjector,
-            serviceModuleInjectors
+            dispatchingAndroidInjector,
+            androidModuleInjectors
         )
     }
 
@@ -156,25 +110,9 @@ abstract class DynamicFeatureModuleApplication : Application(),
     }
 
     protected abstract fun applicationInjector(): AndroidInjector<out DynamicFeatureModuleApplication>
-    override fun supportFragmentInjector(): AndroidInjector<Fragment> {
-        return fragmentInjector
-    }
 
-    override fun activityInjector(): AndroidInjector<Activity> {
-        return activityInjector
-    }
-
-    override fun serviceInjector(): AndroidInjector<Service> {
-        return serviceInjector
-    }
-
-    override fun broadcastReceiverInjector(): AndroidInjector<BroadcastReceiver> {
-        return broadcastReceiverInjector
-    }
-
-    override fun contentProviderInjector(): AndroidInjector<ContentProvider> {
-        injectIfNeeded()
-        return contentProviderInjector
+    override fun androidInjector(): AndroidInjector<Any> {
+        return androidInjector
     }
 
     @Inject
@@ -191,11 +129,7 @@ abstract class DynamicFeatureModuleApplication : Application(),
         val moduleInjector = clazz.newInstance() as FeatureModuleInjector
         moduleInjector.inject(this)
 
-        activityModuleInjectors.add(moduleInjector.activityInjector())
-        broadcastReceiverModuleInjectors.add(moduleInjector.broadcastReceiverInjector())
-        contentProviderModuleInjectors.add(moduleInjector.contentProviderInjector())
-        fragmentModuleInjectors.add(moduleInjector.fragmentInjector())
-        serviceModuleInjectors.add(moduleInjector.serviceInjector())
+        androidModuleInjectors.add(moduleInjector.androidInjector())
     }
 
     private fun injectIfNeeded() {
